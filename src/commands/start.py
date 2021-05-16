@@ -31,7 +31,8 @@ async def _start():
             data.set(item, 0, section="inventory")
 
         data.set_section("cooldown")
-        data.set("hunt", 0, section="cooldown")
+        for cooldown in statics.cooldowns:
+            data.set(cooldown, 0, section="cooldown")
 
         data.write(filename)
 
