@@ -62,6 +62,12 @@ async def update_cooldown():
 async def on_ready():
     print("Logged in as: %s" % (client.user))
 
+    await client.change_presence(
+        activity=discord.Activity(
+            type=discord.ActivityType.watching, name=f"My prefix is {config['PREFIX']}"
+        )
+    )
+
     update_cooldown.start()
 
 
