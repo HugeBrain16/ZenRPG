@@ -14,9 +14,7 @@ async def error_player(error):
 
 
 async def _player(mention):
-    mention_id = int(
-        mention.replace("<", "").replace(">", "").replace("!", "").replace("@", "")
-    )
+    mention_id = utils.mention_to_id(mention)
     mention = await _player.client.fetch_user(mention_id)
     if not isinstance(mention, discord.User):
         await _player.message.channel.send(":x: mention is invalid")
@@ -39,5 +37,6 @@ async def _player(mention):
         embed.set_author(name=f"{mention.display_name} Lv.{data['stats']['level']}")
         embed.set_footer(text=f"Requested by {_player.message.author.display_name}")
         embed.description = f"Showing information for user {mention.display_name}\n\nSTATS:```\nBalance: {data['stats']['balance']}\nCurrent EXP: {data['stats']['current_exp']}\nMax EXP: {data['stats']['max_exp']}```\n\nSTATUS:\n```Health: {data['status']['health']}```"
+        embed.set_thumbnail(url=mention.avatar_url)
 
         await _player.message.channel.send(embed=embed)
