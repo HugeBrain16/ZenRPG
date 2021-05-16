@@ -23,3 +23,9 @@ def get_assigned_user_ids():
                 result.append(int(file.split(".ini")[0]))
 
     return result
+
+
+def mention_to_id(mention):
+    return int(
+        mention.replace("<", "").replace(">", "").replace("!", "").replace("@", "")
+    )
