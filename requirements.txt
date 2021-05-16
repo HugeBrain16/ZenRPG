@@ -1,0 +1,3 @@
+discord.py>=1.7.0
+cmdtools-py>=1.3.0
+iniparser2>=2.2.0
