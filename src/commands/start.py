@@ -1,4 +1,3 @@
-from re import S
 from lib import utils
 from lib import statics
 import iniparser2
@@ -25,6 +24,7 @@ async def _start():
 
         data.set_section("status")
         data.set("health", 100.0, section="status")
+        data.set("max_health", 100.0, section="status")
 
         data.set_section("inventory")
         for item in statics.items.keys():
@@ -33,6 +33,10 @@ async def _start():
         data.set_section("cooldown")
         for cooldown in statics.cooldowns:
             data.set(cooldown, 0, section="cooldown")
+
+        data.set_section("tools")
+        for tool in statics.tools:
+            data.set(tool, True, section="tools")
 
         data.write(filename)
 

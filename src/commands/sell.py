@@ -14,41 +14,43 @@ async def error_sell(error):
 async def _sell(item, amount=1):
     try:
         amount = int(amount)
-
     except Exception:
-        await _sell.message.channel.send(f":x: item amount must be an integer value")
+        await _sell.message.channel.send(f":x: item amount must be an integer value.")
+        return
 
     if item not in statics.items.keys():
         await _sell.message.channel.send(f"item `{item}` did not exists")
+        return
+
+    if statics.items[item]["sellable"] is False:
+        await _sell.message.channel.send(f":x: You cannot sell this item: `{item}`")
+        return
+
+    filename = f"data/users/{_sell.message.author.id}.ini"
+
+    data = iniparser2.INI(convert_property=True)
+    data.read_file(filename)
+
+    if amount < 1:
+        await _sell.message.channel.send(":x: item amount cannot be lower than 1")
 
     else:
-        filename = f"data/users/{_sell.message.author.id}.ini"
 
-        data = iniparser2.INI(convert_property=True)
-        data.read_file(filename)
-
-        if amount < 1:
-            await _sell.message.channel.send(":x: item amount cannot be lower than 1")
+        if data["inventory"][item] < amount:
+            await _sell.message.channel.send(":x: you don't have enough items to sell")
 
         else:
+            price = int((statics.items[item]["price"] / 1.8) * amount)
 
-            if data["inventory"][item] < amount:
-                await _sell.message.channel.send(
-                    ":x: you don't have enough items to sell"
-                )
+            data.set(item, data["inventory"][item] - amount, section="inventory")
+            data.set("balance", data["stats"]["balance"] + price, section="stats")
 
-            else:
-                price = int((statics.items[item]["price"] / 1.8) * amount)
+            data.write(filename)
 
-                data.set(item, data["inventory"][item] - 1, section="inventory")
-                data.set("balance", data["stats"]["balance"] + price, section="stats")
+            embed = discord.Embed(
+                title="Sell",
+                description=f"You sold x{amount} {item} for {price} coins",
+                color=0xFF00FF,
+            )
 
-                data.write(filename)
-
-                embed = discord.Embed(
-                    title="Sell",
-                    description=f"You sold x{amount} {item} for {price} coins",
-                    color=0xFF00FF,
-                )
-
-                await _sell.message.channel.send(embed=embed)
+            await _sell.message.channel.send(embed=embed)

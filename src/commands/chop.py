@@ -3,6 +3,7 @@ import iniparser2
 import discord
 
 from lib import utils
+from lib import statics
 
 
 async def _chop():
@@ -19,20 +20,37 @@ async def _chop():
 
         if data["cooldown"]["chop"] > 0:
             await _chop.message.channel.send(
-                f":warning: command is still cooling down for {data['cooldown']['chop']} minutes"
+                f":warning: command is still cooling down for {utils.fsec(data['cooldown']['chop'])}"
             )
 
         else:
-            rng = random.randint(1, 5)
+            rng = random.randint(1, 3)
 
-            data.set("wood", data["inventory"]["wood"] + rng, section="inventory")
+            if data["tools"]["axe"] in statics.chop:
+                wood = statics.chop[data["tools"]["axe"]]
+
+                if rng == 2:
+                    data.set(
+                        data["tools"]["axe"],
+                        data["inventory"][data["tools"]["axe"]] - 1,
+                        section="inventory",
+                    )
+                    await _chop.message.channel.send(
+                        f":warning: {_chop.message.author.mention} Your `{data['tools']['axe']}` is broken!"
+                    )
+                    data.set("axe", True, section="tools")
+
+            else:
+                wood = 1
+
+            data.set("wood", data["inventory"]["wood"] + wood, section="inventory")
             data.set("current_exp", data["stats"]["current_exp"] + 1.0, section="stats")
-            data.set("chop", 1, section="cooldown")
+            data.set("chop", 30, section="cooldown")
             data.write(filename)
 
             embed = discord.Embed(
                 title="Chop",
-                description=f"You brought back x{rng} wood",
+                description=f"You chopped x{wood} wood",
                 color=0xFF00FF,
             )
             embed.set_author(name=_chop.message.author.display_name)

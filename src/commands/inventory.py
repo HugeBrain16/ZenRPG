@@ -27,10 +27,10 @@ async def _inventory(page=1):
         data.read_file(filename)
 
         for item in data["inventory"].keys():
-            if len(pages[len(pages) - 1]) == 5:
+            if len(pages[len(pages) - 1]) == 15:
                 pages.append([])
 
-            if len(pages[len(pages) - 1]) < 5:
+            if len(pages[len(pages) - 1]) < 15:
                 if data["inventory"][item] > 0:
                     pages[len(pages) - 1].append(f"{item}: {data['inventory'][item]}")
 

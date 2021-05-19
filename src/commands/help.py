@@ -22,7 +22,10 @@ async def _help(page=1):
                 pages.append([])
 
             if len(pages[len(pages) - 1]) < 10:
-                pages[len(pages) - 1].append(f"{cmd}\t{statics.help[cmd]}")
+                try:
+                    pages[len(pages) - 1].append(f"{cmd}\t{statics.help[cmd]}")
+                except KeyError:
+                    pages[len(pages) - 1].append(cmd)
 
         if (page + 1) > len(pages) or (page + 1) < 1:
             await _help.message.channel.send(f":x: Page {page + 1} did not exists")
