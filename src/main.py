@@ -1,10 +1,12 @@
 import os
+import importlib
 import discord
 from discord.ext import tasks
 import iniparser2
 import cmdtools
 
 from lib import utils
+from lib import statics
 
 # setup directories
 if not os.path.isdir("./data"):
@@ -13,12 +15,72 @@ if not os.path.isdir("./data"):
 if not os.path.isdir("./data/users"):
     os.mkdir("./data/users")
 
+if not os.path.isdir("./data/guilds"):
+    os.mkdir("./data/guilds")
+
+if not os.path.isdir("./data/fields"):
+    os.mkdir("./data/fields")
+
 config = iniparser2.INI()
 config.read_file("config.ini")
 
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
+
+
+@tasks.loop(seconds=1)
+async def update_user_database():
+    users = utils.get_assigned_user_ids()
+
+    for user in users:
+        filename = f"data/users/{user}.ini"
+
+        data = iniparser2.INI(convert_property=True)
+        data.read_file(filename)
+
+        if data.has_section("inventory") is False:
+            data.set_section("inventory")
+
+        for item in statics.items.keys():
+            if data.has_property(item, section="inventory") is False:
+                data.set(item, 0, section="inventory")
+
+        if data.has_section("cooldown") is False:
+            data.set_section("cooldown")
+
+        for cooldown in statics.cooldowns:
+            if data.has_property(cooldown, section="cooldown") is False:
+                data.set(item, 0, section="cooldown")
+
+        if data.has_section("tools") is False:
+            data.set_section("tools")
+
+        for tool in statics.tools:
+            if data.has_property(tool, section="tools") is False:
+                data.set(tool, True, section="tools")
+
+        data.write(filename)
+
+
+@tasks.loop(seconds=1)
+async def update_guild_exp():
+    guilds = utils.get_guilds_data()
+
+    for gid, guild in enumerate(guilds):
+        filename = f"data/guilds/{gid}.ini"
+
+        data = iniparser2.INI(convert_property=True)
+        data.read_file(filename)
+
+        if data["stats"]["current_exp"] >= data["stats"]["max_exp"]:
+            prev_exp = data["stats"]["current_exp"] - data["stats"]["max_exp"]
+
+            data.set("current_exp", 0.0 + prev_exp, section="stats")
+            data.set("max_exp", data["stats"]["max_exp"] * 2, section="stats")
+            data.set("level", data["stats"]["level"] + 1, section="stats")
+
+        data.write(filename)
 
 
 @tasks.loop(seconds=1)
@@ -41,7 +103,7 @@ async def update_exp():
         data.write(filename)
 
 
-@tasks.loop(minutes=1)
+@tasks.loop(seconds=1)
 async def update_cooldown():
     userids = utils.get_assigned_user_ids()
 
@@ -58,6 +120,23 @@ async def update_cooldown():
         data.write(filename)
 
 
+@tasks.loop(seconds=1)
+async def update_fields():
+    fields = utils.get_fields()
+
+    for field in fields:
+        filename = f"data/fields/{field}.ini"
+
+        data = iniparser2.INI(convert_property=True)
+        data.read_file(filename)
+
+        for plot in data.sections():
+            if data[plot]["progress"] > 0 and data[plot]["plant"] in statics.items:
+                data.set("progress", data[plot]["progress"] - 1, section=plot)
+
+        data.write(filename)
+
+
 @client.event
 async def on_ready():
     print("Logged in as: %s" % (client.user))
@@ -69,6 +148,10 @@ async def on_ready():
     )
 
     update_cooldown.start()
+    update_exp.start()
+    update_guild_exp.start()
+    update_user_database.start()
+    update_fields.start()
 
 
 @client.event
@@ -85,7 +168,7 @@ async def on_message(msg):
         cmds = utils.get_commands()
 
         if cmdobj.name in cmds:
-            cmd = __import__(f"commands.{cmdobj.name}", fromlist=["commands"])
+            cmd = importlib.import_module(f"commands.{cmdobj.name}")
 
             cmdcall = getattr(cmd, f"_{cmdobj.name}", None)
             cmderrcall = getattr(cmd, f"error_{cmdobj.name}", None)
@@ -114,7 +197,7 @@ async def on_message(msg):
 
             else:
                 await msg.channel.send(
-                    "Internal Error: No command callback for command `{cmdobj.name}`"
+                    f"Internal Error: No command callback for command `{cmdobj.name}`"
                 )
 
 
