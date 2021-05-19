@@ -2,6 +2,14 @@
 
 An RPG discord bot
 
+## Features
+
+- Farming system
+- [Guild system](hmm...)
+
+- Crafting system
+- Levels, Experiences
+
 ## Setup Environment
 
 1. Install dependencies from `requirements.txt` file:
