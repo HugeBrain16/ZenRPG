@@ -5,7 +5,7 @@ An RPG discord bot
 ## Features
 
 - Farming system
-- [Guild system](hmm...)
+- Guild system
 
 - Crafting system
 - Levels, Experiences
