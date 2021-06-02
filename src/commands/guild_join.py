@@ -49,7 +49,7 @@ async def _guild_join(guild_id):
         data = iniparser2.INI(convert_property=True)
         data.read_file(filename)
 
-        data.set(_guild_join.message.author.id, True, section="members")
+        data["members"][_guild_join.message.author.id] = None
         data.write(filename)
 
         await _guild_join.message.channel.send(

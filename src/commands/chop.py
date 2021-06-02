@@ -43,9 +43,9 @@ async def _chop():
             else:
                 wood = 1
 
-            data.set("wood", data["inventory"]["wood"] + wood, section="inventory")
-            data.set("current_exp", data["stats"]["current_exp"] + 1.0, section="stats")
-            data.set("chop", 30, section="cooldown")
+            data["inventory"]["wood"] += wood
+            data["stats"]["current_exp"] += 1.0
+            data["cooldown"]["chop"] = 30
             data.write(filename)
 
             embed = discord.Embed(

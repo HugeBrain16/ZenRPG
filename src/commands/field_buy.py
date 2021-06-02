@@ -33,8 +33,8 @@ async def _field_buy():
 
                 # free plot woo
                 data.set_section("plot0")
-                data.set("plant", True, section="plot0")
-                data.set("progress", 0, section="plot0")
+                data["plot0"]["plant"] = True
+                data["plot0"]["progress"] = 0
 
                 user_data.set(
                     "balance", user_data["stats"]["balance"] - 1000, section="stats"

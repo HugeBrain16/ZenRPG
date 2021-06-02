@@ -44,21 +44,21 @@ async def update_user_database():
 
         for item in statics.items.keys():
             if data.has_property(item, section="inventory") is False:
-                data.set(item, 0, section="inventory")
+                data["inventory"][item] = 0
 
         if data.has_section("cooldown") is False:
             data.set_section("cooldown")
 
         for cooldown in statics.cooldowns:
             if data.has_property(cooldown, section="cooldown") is False:
-                data.set(item, 0, section="cooldown")
+                data["cooldown"][cooldown] = 0
 
         if data.has_section("tools") is False:
             data.set_section("tools")
 
         for tool in statics.tools:
             if data.has_property(tool, section="tools") is False:
-                data.set(tool, True, section="tools")
+                data["tools"][tool] = True
 
         data.write(filename)
 
@@ -76,9 +76,9 @@ async def update_guild_exp():
         if data["stats"]["current_exp"] >= data["stats"]["max_exp"]:
             prev_exp = data["stats"]["current_exp"] - data["stats"]["max_exp"]
 
-            data.set("current_exp", 0.0 + prev_exp, section="stats")
-            data.set("max_exp", data["stats"]["max_exp"] * 2, section="stats")
-            data.set("level", data["stats"]["level"] + 1, section="stats")
+            data["stats"]["current_exp"] = 0.0 + prev_exp
+            data["stats"]["max_exp"] *= 2
+            data["stats"]["level"] += 1
 
         data.write(filename)
 
@@ -96,9 +96,9 @@ async def update_exp():
         if data["stats"]["current_exp"] >= data["stats"]["max_exp"]:
             prev_exp = data["stats"]["current_exp"] - data["stats"]["max_exp"]
 
-            data.set("current_exp", 0.0 + prev_exp, section="stats")
-            data.set("max_exp", data["stats"]["max_exp"] * 2, section="stats")
-            data.set("level", data["stats"]["level"] + 1, section="stats")
+            data["stats"]["current_exp"] = 0.0 + prev_exp
+            data["stats"]["max_exp"] *= 2
+            data["stats"]["level"] += 1
 
         data.write(filename)
 
@@ -115,7 +115,7 @@ async def update_cooldown():
 
         for cooldown in data["cooldown"].keys():
             if data["cooldown"][cooldown] > 0:
-                data.set(cooldown, data["cooldown"][cooldown] - 1, section="cooldown")
+                data["cooldown"][cooldown] -= 1
 
         data.write(filename)
 
@@ -132,7 +132,7 @@ async def update_fields():
 
         for plot in data.sections():
             if data[plot]["progress"] > 0 and data[plot]["plant"] in statics.items:
-                data.set("progress", data[plot]["progress"] - 1, section=plot)
+                data[plot]["progress"] -= 1
 
         data.write(filename)
 

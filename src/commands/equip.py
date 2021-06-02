@@ -32,7 +32,7 @@ async def _equip(item):
                     )
                     return
 
-                data.set("axe", item, section="tools")
+                data["tools"]["axe"] = item
                 data.write(filename)
 
                 await _equip.message.channel.send(
@@ -51,7 +51,7 @@ async def _equip(item):
                     )
                     return
 
-                data.set("pickaxe", item, section="tools")
+                data["tools"]["pickaxe"] = item
                 data.write(filename)
 
                 await _equip.message.channel.send(
@@ -70,7 +70,7 @@ async def _equip(item):
                     )
                     return
 
-                data.set("sword", item, section="tools")
+                data["tools"]["sword"] = item
                 data.write(filename)
 
                 await _equip.message.channel.send(

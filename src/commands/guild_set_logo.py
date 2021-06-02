@@ -19,8 +19,8 @@ async def _guild_set_logo(url):
             data = iniparser2.INI(convert_property=True)
             data.read_file(filename)
 
-            if _guild_set_logo.message.author.id == data["info"]["leader"]:
-                data.set("logo", url, section="info")
+            if _guild_set_logo.message.author.id == data["info"]["leader"]
+                data["info"]["logo"] = url
                 data.write(filename)
 
                 await _guild_set_logo.message.channel.send(

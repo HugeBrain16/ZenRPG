@@ -45,16 +45,12 @@ async def _use(item):
                 if (data["status"]["health"] + statics.consumable[item]) > data[
                     "status"
                 ]["max_health"]:
-                    data.set("health", data["status"]["max_health"], section="status")
+                    data["status"]["health"] = data["status"]["max_health"]
 
                 else:
-                    data.set(
-                        "health",
-                        data["status"]["health"] + statics.consumable[item],
-                        section="status",
-                    )
+                    data["status"]["health"] += statics.consumable[item]
 
-                data.set(item, data["inventory"][item] - 1, section="inventory")
+                data["inventory"][item] -= 1
 
                 data.write(filename)
 

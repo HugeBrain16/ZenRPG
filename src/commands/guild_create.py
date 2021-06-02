@@ -67,15 +67,15 @@ async def _guild_create(name):
 
                 data = iniparser2.INI(convert_property=True)
                 data.set_section("info")
-                data.set("name", name, section="info")
-                data.set("leader", _guild_create.message.author.id, section="info")
-                data.set("created", datetime.datetime.utcnow(), section="info")
-                data.set("logo", "no logo", section="info")
+                data["info"]["name"] = name
+                data["info"]["leader"] = _guild_create.message.author.id
+                data["info"]["created"] = datetime.datetime.utcnow()
+                data["info"]["logo"] = "no logo"
 
                 data.set_section("stats")
-                data.set("level", 0, section="stats")
-                data.set("current_exp", 0.0, section="stats")
-                data.set("max_exp", 100.0, section="stats")
+                data["stats"]["level"] = 0
+                data["stats"]["current_exp"] = 0.0
+                data["stats"]["max_exp"] = 100.0
 
                 data.set_section("members")
                 data.set(_guild_create.message.author.id, True, section="members")

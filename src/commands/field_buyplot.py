@@ -38,14 +38,10 @@ async def _field_buyplot():
                         f":white_check_mark: You bought a new field plot with id `{len(data.sections())}`"
                     )
                     data.set_section(f"plot{len(data.sections())}")
-                    data.set("plant", True, section=f"plot{len(data.sections()) - 1}")
-                    data.set("progress", 0, section=f"plot{len(data.sections()) - 1}")
+                    data[f"plot{len(data.sections()) - 1}"]["plant"] = True
+                    data[f"plot{len(data.sections()) - 1}"]["progress"] = 0
 
-                    user_data.set(
-                        "balance",
-                        user_data["stats"]["balance"] - price,
-                        section="stats",
-                    )
+                    user_data["stats"]["balance"] -= price
 
                     data.write(filename)
                     user_data.write(user_filename)

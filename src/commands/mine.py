@@ -30,8 +30,8 @@ async def _mine():
             item = mine_keys[rng]
             rng_broken = random.randint(1, 3)
 
-            data.set("mine", 45, section="cooldown")
-            data.set("current_exp", data["stats"]["current_exp"] + 1.0, section="stats")
+            data["cooldown"]["mine"] = 45
+            data["stats"]["current_exp"] += 1.0
 
             if data["tools"]["pickaxe"] not in statics.items:
                 await _mine.message.channel.send(f":x: Equip a pickaxe to mine")
@@ -43,19 +43,13 @@ async def _mine():
                 result = 0
 
             if rng_broken == 2:
-                data.set(
-                    data["tools"]["pickaxe"],
-                    data["inventory"][data["tools"]["pickaxe"]] - 1,
-                    section="inventory",
-                )
+                data["inventory"][data["tools"]["pickaxe"]] -= 1
                 await _mine.message.channel.send(
                     f":warning: {_mine.message.author.mention}, Your {data['tools']['pickaxe']} is broken"
                 )
-                data.set("pickaxe", True, section="tools")
+                data["tools"]["pickaxe"] = True
 
-            data.set(
-                item, data.get(item, section="inventory") + result, section="inventory"
-            )
+            data["inventory"][item] += result
             data.write(filename)
 
             embed = discord.Embed(

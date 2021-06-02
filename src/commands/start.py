@@ -17,26 +17,26 @@ async def _start():
         data = iniparser2.INI(convert_property=True)
 
         data.set_section("stats")
-        data.set("balance", 500, section="stats")
-        data.set("level", 0, section="stats")
-        data.set("current_exp", 0.0, section="stats")
-        data.set("max_exp", 50.0, section="stats")
+        data["stats"]["balance"] = 500
+        data["stats"]["level"] = 0
+        data["stats"]["current_exp"] = 0.0
+        data["stats"]["max_exp"] = 50.0
 
         data.set_section("status")
-        data.set("health", 100.0, section="status")
-        data.set("max_health", 100.0, section="status")
+        data["status"]["health"] = 100.0
+        data["status"]["max_health"] = 100.0
 
         data.set_section("inventory")
         for item in statics.items.keys():
-            data.set(item, 0, section="inventory")
+            data["inventory"][item] = 0
 
         data.set_section("cooldown")
         for cooldown in statics.cooldowns:
-            data.set(cooldown, 0, section="cooldown")
+            data["cooldown"][cooldown] = 0
 
         data.set_section("tools")
         for tool in statics.tools:
-            data.set(tool, True, section="tools")
+            data["tools"][tool] = True
 
         data.write(filename)
 

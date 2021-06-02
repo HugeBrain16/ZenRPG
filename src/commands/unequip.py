@@ -30,7 +30,7 @@ async def _unequip(tool):
                 )
                 return
 
-            data.set(tool, True, section="tools")
+            data["tools"][tool] = True
             data.write(filename)
 
             await _unequip.message.channel.send(

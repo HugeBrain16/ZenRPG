@@ -32,28 +32,22 @@ async def _fish():
             rng_fish = random.randint(1, 3)
 
             if rng == 2:
-                data.set(
-                    "fishing_rod",
-                    data["inventory"]["fishing_rod"] - 1,
-                    section="inventory",
-                )
+                data["inventory"]["fising_rod"] -= 1
                 await _fish.message.channel.send(
                     f":warning: {_fish.message.author.mention}, Your fishing rod is broken"
                 )
 
             if rng_fish == 2:
-                data.set("fish", 60, section="cooldown")
-                data.set("fish", data["inventory"]["fish"] + 1, section="inventory")
-                data.set(
-                    "current_exp", data["stats"]["current_exp"] + 2.0, section="stats"
-                )
+                data["cooldown"]["fish"] = 60
+                data["inventory"]["fish"] += 1
+                data["stats"]["current_exp"] += 2.0
 
                 await _fish.message.channel.send(
                     f"{_fish.message.author.mention}, You have caught a `fish`"
                 )
 
             else:
-                data.set("fish", 60, section="cooldown")
+                data["cooldown"]["fish"] = 60
                 await _fish.message.channel.send(f":x: you didn't catch anything")
 
         data.write(filename)

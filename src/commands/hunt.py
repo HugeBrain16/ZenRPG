@@ -34,16 +34,14 @@ async def _hunt():
                 if (
                     data["status"]["health"] - item_data[data["tools"]["sword"]]
                 ) <= 0.0:
-                    data.set("health", data["status"]["max_health"], section="status")
-                    data.set("current_exp", 0.0, section="stats")
+                    data["status"]["health"] = data["status"]["max_health"]
+                    data["stats"]["current_exp"] = 0.0
 
                     if data["stats"]["level"] > 0:
-                        data.set(
-                            "max_exp", data["stats"]["max_exp"] / 2, section="stats"
-                        )
-                        data.set("level", data["stats"]["level"] - 1, section="stats")
+                        data["stats"]["max_exp"] /= 2
+                        data["stats"]["level"] -= 1
 
-                    data.set("hunt", 60, section="cooldown")
+                    data["cooldown"]["hunt"] = 60
 
                     for tool in statics.tools:
                         if tool in statics.items:
@@ -56,25 +54,13 @@ async def _hunt():
                         f":skull: You got killed by: `{item}`, you lost a level, EXP and your equipped tools"
                     )
                 else:
-                    data.set("hunt", 60, section="cooldown")
-                    data.set(item, data["inventory"][item] + 1, section="inventory")
-                    data.set(
-                        "health",
-                        data["status"]["health"] - item_data[data["tools"]["sword"]],
-                        section="status",
-                    )
-                    data.set(
-                        "current_exp",
-                        data["stats"]["current_exp"] + 5.0,
-                        section="stats",
-                    )
+                    data["cooldown"]["hunt"] = 60
+                    data["inventory"][item] += 1
+                    data["status"]["health"] -= item_data[data["tools"]["sword"]]
+                    data["stats"]["current_exp"] = 5.0
 
                     if rng_break == 2:
-                        data.set(
-                            data["tools"]["sword"],
-                            data["inventory"][data["tools"]["sword"]] - 1,
-                            section="inventory",
-                        )
+                        data["inventory"][data["tools"]["sword"]] -= 1
                         await _hunt.message.channel.send(
                             f":warning: Your `{data['tools']['sword']}` is broken"
                         )
@@ -85,14 +71,12 @@ async def _hunt():
 
                     await _hunt.message.channel.send(embed=embed)
 
-                    data.set("sword", True, section="tools")
+                    data["tools"]["sword"] = True
 
             elif len(item_data) == 0:
-                data.set("hunt", 60, section="cooldown")
-                data.set(item, data["inventory"][item] + 1, section="inventory")
-                data.set(
-                    "current_exp", data["stats"]["current_exp"] + 5.0, section="stats"
-                )
+                data["cooldown"]["hunt"] = 60
+                data["inventory"][item] += 1
+                data["stats"]["current_exp"] = 5.0
 
                 embed = discord.Embed(title="hunt", color=0xFF00FF)
                 embed.description = f"You killed a(n) `{item}`"

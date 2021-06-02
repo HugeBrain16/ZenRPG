@@ -55,18 +55,9 @@ async def _craft(item, amount=1):
                 used.append(
                     f"x{statics.craft[item]['recipes'][recipe] * amount} {recipe}"
                 )
-                data.set(
-                    recipe,
-                    data["inventory"][recipe]
-                    - (statics.craft[item]["recipes"][recipe] * amount),
-                    section="inventory",
-                )
+                data["inventory"][recipe] -= (statics.craft[item]["recipes"][recipe] * amount)
 
-        data.set(
-            item,
-            data["inventory"][item] + (statics.craft[item]["result"] * amount),
-            section="inventory",
-        )
+        data["inventory"][item] += (statics.craft[item]["result"] * amount)
         data.write(filename)
 
         embed = discord.Embed(title="Craft", color=0xFF00FF)

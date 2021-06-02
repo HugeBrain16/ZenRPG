@@ -41,7 +41,7 @@ async def _guild_leave():
             data = iniparser2.INI(convert_property=True)
             data.read_file(filename)
 
-            data.remove_property(str(_guild_leave.message.author.id), section="members")
+            del data["members"][str(_guild_leave.message.author.id)]
             data.write(filename)
 
             await _guild_leave.message.channel.send(

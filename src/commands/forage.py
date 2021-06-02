@@ -29,9 +29,9 @@ async def _forage():
             rng_item = random.randint(0, len(statics.forage) - 1)
             item = statics.forage[rng_item]
 
-            data.set(item, data["inventory"][item] + rng_result, section="inventory")
-            data.set("current_exp", data["stats"]["current_exp"] + 1.0, section="stats")
-            data.set("forage", 15, section="cooldown")
+            data["inventory"][item] += rng_result
+            data["stats"]["current_exp"] += 1.0
+            data["cooldown"]["forage"] = 15
             data.write(filename)
 
             embed = discord.Embed(

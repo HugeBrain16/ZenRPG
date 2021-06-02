@@ -60,20 +60,12 @@ async def _field_harvest(plot):
                     if data[_plot]["plant"] in statics.items:
 
                         if data[_plot]["progress"] == 0:
-                            user_data.set(
-                                data[_plot]["plant"],
-                                user_data["inventory"][data[_plot]["plant"]] + 1,
-                                section="inventory",
-                            )
-                            user_data.set(
-                                "current_exp",
-                                user_data["stats"]["current_exp"] + 10.0,
-                                section="stats",
-                            )
+                            user_data["inventory"][data[_plot]["plant"]] += 1
+                            user_data["stats"]["current_exp"] += 10.0
                             await _field_harvest.message.channel.send(
                                 f":white_check_mark: {_field_harvest.message.author.mention}, You've harvested item `{data[_plot]['plant']}` from plot id `{plot}`"
                             )
-                            data.set("plant", True, section=_plot)
+                            data[_plot]["plant"] = True
 
                             data.write(filename)
                             user_data.write(user_filename)

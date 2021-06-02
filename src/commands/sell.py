@@ -42,8 +42,8 @@ async def _sell(item, amount=1):
         else:
             price = int((statics.items[item]["price"] / 1.8) * amount)
 
-            data.set(item, data["inventory"][item] - amount, section="inventory")
-            data.set("balance", data["stats"]["balance"] + price, section="stats")
+            data["inventory"][item] -= amount
+            data["stats"]["balance"] += price
 
             data.write(filename)
 

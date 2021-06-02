@@ -51,8 +51,8 @@ async def _buy(item, amount=1):
             )
             return
 
-        data.set(item, data["inventory"][item] + amount, section="inventory")
-        data.set("balance", data["stats"]["balance"] - price, section="stats")
+        data["inventory"][item] += amount
+        data["stats"]["balance"] -= price
 
         data.write(filename)
 
