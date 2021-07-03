@@ -158,25 +158,23 @@ async def on_ready():
 async def on_message(msg):
 
     cmdtext = msg.content
-    cmdobj = cmdtools.Cmd(cmdtext, prefix=config["PREFIX"])
-    cmdobj.parse()
+    cmd = cmdtools.Cmd(cmdtext, prefix=config["PREFIX"])
 
-    if cmdobj.name:
+    if cmd.name:
         if msg.author.bot is True:
             return
 
         cmds = utils.get_commands()
 
-        if cmdobj.name in cmds:
-            cmd = importlib.import_module(f"commands.{cmdobj.name}")
+        if cmd.name in cmds:
+            cmdobj = importlib.import_module(f"commands.{cmd.name}")
 
-            cmdcall = getattr(cmd, f"_{cmdobj.name}", None)
-            cmderrcall = getattr(cmd, f"error_{cmdobj.name}", None)
+            cmdcall = getattr(cmdobj, f"_{cmd.name}", None)
+            cmderrcall = getattr(cmdobj, f"error_{cmd.name}", None)
 
             if cmdcall is not None:
                 if cmderrcall is not None:
-                    await cmdtools.AioProcessCmd(
-                        cmdobj,
+                    await cmd.aio_process_cmd(
                         cmdcall,
                         cmderrcall,
                         attrs={
@@ -186,8 +184,7 @@ async def on_message(msg):
                     )
 
                 else:
-                    await cmdtools.AioProcessCmd(
-                        cmdobj,
+                    await cmd.aio_process_cmd(
                         cmdcall,
                         attrs={
                             "message": msg,
@@ -197,7 +194,7 @@ async def on_message(msg):
 
             else:
                 await msg.channel.send(
-                    f"Internal Error: No command callback for command `{cmdobj.name}`"
+                    f"Internal Error: No command callback for command `{cmd.name}`"
                 )
 
 
